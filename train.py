@@ -1,4 +1,3 @@
-#  The first file, train.py, will train a new network on a dataset and save the model as a checkpoint. 
 import os
 import data_processing,load_model,argparse
 from torch import optim,nn
@@ -88,12 +87,10 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
 
                     # Resetting metrics & turning on training mode
                     running_loss = running_accuracy = 0
-                    model.train()
-            # Uncomment for post_checkpoint version           
-            # end_epoch = time.time()
-            # epoch_time = end_epoch-start_epoch
-            # print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
-
+                    model.train()         
+            end_epoch = time.time()
+            epoch_time = end_epoch-start_epoch
+            print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
 
 def save_model(trained_model,hidden_units,output_units,dest_dir):
     model_checkpoint = {'clf_input':18432,
@@ -106,8 +103,6 @@ def save_model(trained_model,hidden_units,output_units,dest_dir):
     else:
         torch.save(model_checkpoint,"model_checkpoint.pth")
 
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('data_directory', help="The location of the files used to train the model.")
@@ -119,12 +114,11 @@ def main():
     parser.add_argument('-p','--print_every', help="Number of batches to print training metrics",dest="print_every",default=5, type=int)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
     parser.add_argument('-sd' ,'--save_dir', help="Set Directory destination for model checkpoint",dest="save_dir",default="")
-    
 
     args = parser.parse_args()
     # Loading dataloaders from data directory
     training_files = args.data_directory
-    train_dataloader,valid_dataloader,test_dataloader, class_to_idx = data_processing.load_images(training_files)
+    train_dataloader,valid_dataloader,test_dataloader = data_processing.load_images(training_files)
     # Loading Model
     model = args.arch
     hidden_units = args.hidden_units
@@ -142,7 +136,6 @@ def main():
     # Save model to checkpoint
     dest_dir = args.save_dir
     save_model(pretrained_model,hidden_units,output_units,dest_dir)
-
     
 if __name__ == '__main__':
     main()
