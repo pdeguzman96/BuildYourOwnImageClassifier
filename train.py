@@ -1,7 +1,8 @@
 #  The first file, train.py, will train a new network on a dataset and save the model as a checkpoint. 
+import os
 import data_processing,load_model,argparse
 from torch import optim,nn
-from workspace_utils import active_session
+from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
 import time
 import torch
 
@@ -9,6 +10,8 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
     '''
     Trains and validates model on training data and validation data.
     Note: Optimizer used is Adam and Loss function is Negative Log Likelihood Loss
+    
+    Prints out training loss, training accuracy, validation loss, and validation accuracy as the network trains
     '''
     model.to(device)
     optimizer = optim.Adam(model.classifier.parameters(),lr=lr)
@@ -17,8 +20,11 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
     running_loss = running_accuracy = 0
     validation_losses, training_losses = [],[]
 
+    os.system('clear')
+    print("Training model...")
     with active_session():
         for e in range(epochs):
+            start_epoch = time.time()
             batches = 0
             # Turning on training mode
             model.train()
@@ -76,16 +82,31 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
                     print(f'Running Training Loss: {running_loss/print_every:.3f}')
                     print(f'Running Training Accuracy: {running_accuracy/print_every*100:.2f}%')
                     print(f'Validation Loss: {validation_loss/len(valid_dataloader):.3f}')
-                    print(f'Validation Accuracy: {validation_accuracy/ \
-                                                    len(valid_dataloader)*100:.2f}%')
+                    print(f'Validation Accuracy: {validation_accuracy/len(valid_dataloader)*100:.2f}%')
                     print(f'Training Time: {training_time:.3f} seconds for {print_every} batches.')
                     print(f'Validation Time: {validation_time:.3f} seconds.\n')
 
                     # Resetting metrics & turning on training mode
                     running_loss = running_accuracy = 0
-                    model.train()   
+                    model.train()
+            # Uncomment for post_checkpoint version           
+            # end_epoch = time.time()
+            # epoch_time = end_epoch-start_epoch
+            # print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
 
-# Prints out training loss, validation loss, and validation accuracy as the network trains
+
+def save_model(trained_model,hidden_units,output_units,dest_dir):
+    model_checkpoint = {'clf_input':18432,
+                    'clf_output':output_units,
+                    'clf_hidden':hidden_units,
+                    'state_dict':trained_model.state_dict(),
+                    }
+    if dest_dir:
+        torch.save(model_checkpoint,dest_dir+"/model_checkpoint.pth")
+    else:
+        torch.save(model_checkpoint,"model_checkpoint.pth")
+
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -95,14 +116,15 @@ def main():
     parser.add_argument('-o','--output_units', help="No. Output Units",dest="output_units",default=102, type=int)
     parser.add_argument('-lr','--learning_rate', help="Adam Learning Rate",dest="learning_rate",default=.001, type=float)
     parser.add_argument('-e','--epochs', help="Epochs for model training",dest="epochs",default=5, type=int)
-    parser.add_argument('-','--print_every', help="Number of batches to print training metrics",dest="print_every",default=5, type=int)
-    parser.add_argument('--gpu', help="Use GPU (CUDA)?", action="store_true")
+    parser.add_argument('-p','--print_every', help="Number of batches to print training metrics",dest="print_every",default=5, type=int)
+    parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
+    parser.add_argument('-sd' ,'--save_dir', help="Set Directory destination for model checkpoint",dest="save_dir",default="")
     
 
     args = parser.parse_args()
     # Loading dataloaders from data directory
     training_files = args.data_directory
-    train_dataloader,valid_dataloader,test_dataloader = data_processing.load_images(training_files)
+    train_dataloader,valid_dataloader,test_dataloader, class_to_idx = data_processing.load_images(training_files)
     # Loading Model
     model = args.arch
     hidden_units = args.hidden_units
@@ -117,7 +139,9 @@ def main():
     epochs = args.epochs
     print_every = args.print_every
     train_model(pretrained_model,train_dataloader,valid_dataloader,epochs,device,lr,print_every)
-
+    # Save model to checkpoint
+    dest_dir = args.save_dir
+    save_model(pretrained_model,hidden_units,output_units,dest_dir)
 
     
 if __name__ == '__main__':
