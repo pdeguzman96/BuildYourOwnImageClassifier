@@ -90,10 +90,13 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
                     model.train()         
             end_epoch = time.time()
             epoch_time = end_epoch-start_epoch
+            print("=======================================")
             print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
+            print("=======================================\n")
 
-def save_model(trained_model,hidden_units,output_units,dest_dir):
-    model_checkpoint = {'clf_input':18432,
+def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch):
+    model_checkpoint = {'model_arch':model_arch, 
+                    'clf_input':18432,
                     'clf_output':output_units,
                     'clf_hidden':hidden_units,
                     'state_dict':trained_model.state_dict(),
@@ -135,7 +138,7 @@ def main():
     train_model(pretrained_model,train_dataloader,valid_dataloader,epochs,device,lr,print_every)
     # Save model to checkpoint
     dest_dir = args.save_dir
-    save_model(pretrained_model,hidden_units,output_units,dest_dir)
+    save_model(pretrained_model,hidden_units,output_units,dest_dir,args.arch)
     
 if __name__ == '__main__':
     main()
