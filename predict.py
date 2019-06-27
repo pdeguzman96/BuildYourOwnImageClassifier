@@ -85,7 +85,7 @@ def main():
         os.system('clear')
         print("PREDICTIONS")
         for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
-            print(f'{i}) {ps*100:.2f}% {ls.title()} (Class No. {cs}) ')       
+            print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
     else:
         os.system('clear')
         print("PREDICTIONS")
