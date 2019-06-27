@@ -58,12 +58,10 @@ def print_predictions(probabilities, classes, category_names=None):
     '''
     if category_names:
         labels = class_to_label(category_names,classes)
-        os.system('clear')
         print("PREDICTIONS")
         for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
             print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
     else:
-        os.system('clear')
         print("PREDICTIONS")
         for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
             print(f'{i}) {ps*100:.2f}% Class No. {cs} ')          
@@ -107,18 +105,22 @@ def main():
 
     index_mapping = dict(map(reversed, class_to_idx.items()))
     
-    probabilities,classes = predict(image,model,index_mapping,topk,device)
-    
     if image: 
+        os.system('clear')
+        probabilities,classes = predict(image,model,index_mapping,topk,device)
         if category_names:
             print_predictions(probabilities,classes,category_names)      
         else:
             print_predictions(probabilities,classes)          
-    # elif img_dir:
-    #     image_paths = return_image_files(img_dir)
-    #     for img in image_paths:
-            
-    #         predict(img,model,index_mapping,topk,device)
+    elif img_dir:
+        os.system('clear')
+        image_paths = return_image_files(img_dir)
+        for img in image_paths:
+            probabilities, classes = predict(img_dir+'/'+img,model,index_mapping,topk,device)
+            if category_names:
+                print_predictions(probabilities,classes,category_names)      
+            else:
+                print_predictions(probabilities,classes) 
 
 if __name__=='__main__':
     main()
