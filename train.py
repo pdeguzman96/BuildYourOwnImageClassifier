@@ -1,8 +1,7 @@
-import os
+import os,sys,time
 import data_processing,load_model,argparse
 from torch import optim,nn
 from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
-import time
 import torch
 import matplotlib.pyplot as plt
 
@@ -22,6 +21,7 @@ def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,d
 
     os.system('clear')
     print("Training model...")
+    
     with active_session():
         for e in range(epochs):
             start_epoch = time.time()
@@ -126,9 +126,9 @@ def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class
                     'model_class_to_idx':class_to_idx,
                     }
     if dest_dir:
-        torch.save(model_checkpoint,dest_dir+"/model_checkpoint.pth")
+        torch.save(model_checkpoint,dest_dir+"/"+model_arch+"_checkpoint.pth")
     else:
-        torch.save(model_checkpoint,"model_checkpoint.pth")
+        torch.save(model_checkpoint,model_arch+"_checkpoint.pth")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -150,6 +150,7 @@ def main():
     model = args.arch
     hidden_units = args.hidden_units
     output_units = args.output_units
+    dest_dir = args.save_dir
     pretrained_model = load_model.select_pretrained_model(model,hidden_units,output_units)
     # Training Model
     if args.gpu:
@@ -161,7 +162,6 @@ def main():
     print_every = args.print_every
     train_model(pretrained_model,train_dataloader,valid_dataloader,test_dataloader,epochs,device,lr,print_every)
     # Save model to checkpoint
-    dest_dir = args.save_dir
     save_model(pretrained_model,hidden_units,output_units,dest_dir,args.arch,class_to_idx)
     
 if __name__ == '__main__':
