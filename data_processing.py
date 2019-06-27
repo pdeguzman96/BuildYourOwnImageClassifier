@@ -15,7 +15,7 @@ def load_images(directory):
         i.e. If training image "image123.jpg" has label 1, the "train" directory must have a "1" directory containing "image123.png"
     
     Input: Directory containing "train", "valid", and "test" directories
-    Returns: Dataloaders: train_dataloader,valid_dataloader,test_dataloader
+    Returns: Dataloaders: train_dataloader,valid_dataloader,test_dataloader, class_to_idx
     Note: Images are transformed to be cropped at 220x220 and normalized per PyTorch pretrained models. Dataloaders load in batches of 64.
     '''
     # DIRECTORIES
@@ -47,7 +47,13 @@ def load_images(directory):
     valid_dataloader = torch.utils.data.DataLoader(image_datasets_valid,batch_size=64,shuffle=True)
     test_dataloader = torch.utils.data.DataLoader(image_datasets_test,batch_size=64,shuffle=True)
 
-    return train_dataloader,valid_dataloader,test_dataloader
+    try:
+        class_to_idx = image_datasets_train.class_to_idx
+    except:
+        class_to_idx = None
+        print("Warning: No class_to_idx mapping found.")
+
+    return train_dataloader,valid_dataloader,test_dataloader,class_to_idx
 
 def process_image(image):
     ''' 

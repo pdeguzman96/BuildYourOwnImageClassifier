@@ -94,12 +94,13 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
             print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
             print("=======================================\n")
 
-def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch):
+def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class_to_idx):
     model_checkpoint = {'model_arch':model_arch, 
                     'clf_input':18432,
                     'clf_output':output_units,
                     'clf_hidden':hidden_units,
                     'state_dict':trained_model.state_dict(),
+                    'model_class_to_idx':class_to_idx,
                     }
     if dest_dir:
         torch.save(model_checkpoint,dest_dir+"/model_checkpoint.pth")
@@ -121,7 +122,7 @@ def main():
     args = parser.parse_args()
     # Loading dataloaders from data directory
     training_files = args.data_directory
-    train_dataloader,valid_dataloader,test_dataloader = data_processing.load_images(training_files)
+    train_dataloader,valid_dataloader,test_dataloader,class_to_idx = data_processing.load_images(training_files)
     # Loading Model
     model = args.arch
     hidden_units = args.hidden_units
@@ -138,7 +139,7 @@ def main():
     train_model(pretrained_model,train_dataloader,valid_dataloader,epochs,device,lr,print_every)
     # Save model to checkpoint
     dest_dir = args.save_dir
-    save_model(pretrained_model,hidden_units,output_units,dest_dir,args.arch)
+    save_model(pretrained_model,hidden_units,output_units,dest_dir,args.arch,class_to_idx)
     
 if __name__ == '__main__':
     main()
