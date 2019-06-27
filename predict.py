@@ -59,9 +59,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('image',help="Path to location of image.")
     parser.add_argument('checkpoint',help="Path to location of trained model checkpoint.")
-    parser.add_argument('-t','--top_k',help="No. of top classes to return",dest="top_k",type=int,default=3)
+    parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=3)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
-    parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping",dest="category_names")
+    parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping")
 
     args = parser.parse_args()
     image = args.image
@@ -82,13 +82,15 @@ def main():
     
     if category_names:
         labels = class_to_label(category_names,classes)
+        os.system('clear')
+        print("PREDICTIONS")
+        for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
+            print(f'{i}) {ps*100:.2f}% {ls.title()} (Class No. {cs}) ')       
     else:
-        labels = classes
-
-    os.system('clear')
-    print("PREDICTIONS")
-    for i,(ps,ls) in enumerate(zip(probabilities,labels),1):
-        print(f'{i}) {ps*100:.2f}% {ls.title()} ')
+        os.system('clear')
+        print("PREDICTIONS")
+        for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
+            print(f'{i}) {ps*100:.2f}% Class No. {cs} ')          
 
 if __name__=='__main__':
     main()
