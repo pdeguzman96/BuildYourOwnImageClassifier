@@ -4,18 +4,19 @@ from torch import optim,nn
 from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
 import time
 import torch
+import matplotlib.pyplot as plt
 
-def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_every):
+def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,device,lr,print_every):
     '''
     Trains and validates model on training data and validation data.
     Note: Optimizer used is Adam and Loss function is Negative Log Likelihood Loss
     
-    Prints out training loss, training accuracy, validation loss, and validation accuracy as the network trains
+    Prints out training loss, training accuracy, validation loss, and validation accuracy as the network trains.
+    Additionally, plots training summary via matplotlib.
     '''
     model.to(device)
     optimizer = optim.Adam(model.classifier.parameters(),lr=lr)
     criterion = nn.NLLLoss()
-    print_every = print_every
     running_loss = running_accuracy = 0
     validation_losses, training_losses = [],[]
 
@@ -93,6 +94,28 @@ def train_model(model,train_dataloader,valid_dataloader,epochs,device,lr,print_e
             print("=======================================")
             print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
             print("=======================================\n")
+        
+        # Plotting training data
+        plt.figure()
+        plt.title("Training Summary")
+        plt.plot(training_losses,label='Training Loss')
+        plt.plot(validation_losses,label='Validation Loss')
+        plt.legend()
+        plt.show()
+
+        print("Evaluating Model on Testing Data...\n")
+        test_accuracy = 0
+        for images,labels in test_dataloader:
+            model.eval()
+            images,labels = images.to(device),labels.to(device)
+            log_ps = model.forward(images)
+            ps = torch.exp(log_ps)
+            top_ps,top_class = ps.topk(1,dim=1)
+            matches = (top_class == labels.view(*top_class.shape)).type(torch.FloatTensor)
+            accuracy = matches.mean()
+            test_accuracy += accuracy
+            model.train()
+        print(f'Model Test Accuracy: {test_accuracy*100:.2f}%\n')
 
 def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class_to_idx):
     model_checkpoint = {'model_arch':model_arch, 
@@ -136,7 +159,7 @@ def main():
     lr = args.learning_rate
     epochs = args.epochs
     print_every = args.print_every
-    train_model(pretrained_model,train_dataloader,valid_dataloader,epochs,device,lr,print_every)
+    train_model(pretrained_model,train_dataloader,valid_dataloader,test_dataloader,epochs,device,lr,print_every)
     # Save model to checkpoint
     dest_dir = args.save_dir
     save_model(pretrained_model,hidden_units,output_units,dest_dir,args.arch,class_to_idx)

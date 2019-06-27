@@ -1,6 +1,8 @@
 from torchvision import models
 from torch import nn
 from collections import OrderedDict
+import torch
+import sys,os
 
 def select_pretrained_model(model_name,hidden_units,no_output_categories):
     '''
@@ -19,6 +21,11 @@ def select_pretrained_model(model_name,hidden_units,no_output_categories):
     pretrained_model = getattr(models,model_name)(pretrained=True)
     for param in pretrained_model.parameters():
         param.requires_grad = False
+
+    if pretrained_model.classifier.in_features < 18432:
+        os.system('clear')
+        print("Selected model classifier does not have enough input features. Please select another model.")
+        sys.exit()
 
     classifier = nn.Sequential(OrderedDict([
                                 ('fc1', nn.Linear(18432,hidden_units)),
