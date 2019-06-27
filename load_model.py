@@ -4,6 +4,8 @@ from collections import OrderedDict
 import torch
 import sys,os
 
+eligible_models = ['vgg11','vgg11_bn','vgg13','vgg13_bn','vgg16','vgg16_bn','vgg19','vgg19_bn']
+
 def select_pretrained_model(model_name,hidden_units,no_output_categories):
     '''
     Inputs: 
@@ -18,18 +20,41 @@ def select_pretrained_model(model_name,hidden_units,no_output_categories):
     
     Classifier to be trained is replaced to work with 220x220 PIL images.
     '''
-    pretrained_model = getattr(models,model_name)(pretrained=True)
-    for param in pretrained_model.parameters():
-        param.requires_grad = False
-
-    if pretrained_model.classifier.in_features < 18432:
+    try:
+        pretrained_model = getattr(models,model_name)(pretrained=True)
+        for param in pretrained_model.parameters():
+            param.requires_grad = False
+    
+    except:
         os.system('clear')
-        print("Selected model classifier does not have enough input features. Please select another model.")
+        print("Incompatible Model. Please select another model. The following models have been tested and work with this program...")
+        for m in eligible_models:
+            print(m)
+        sys.exit()        
+
+    try:
+        pretrained_model.classifier
+    except:
+        os.system('clear')
+        print("Selected model does not have a classifier. Please select another model. The following models have been tested and work with this program...")
+        for m in eligible_models:
+            print(m)
         sys.exit()
+
+    try:    
+        if pretrained_model.classifier.in_features < 18432:
+            os.system('clear')
+            print("Selected model classifier does not have enough input features. Please select another model. The following models have been tested and work with this program...")
+        for m in eligible_models:
+            print(m)
+            sys.exit()
+    except:
+        pass
 
     classifier = nn.Sequential(OrderedDict([
                                 ('fc1', nn.Linear(18432,hidden_units)),
                                 ('relu', nn.ReLU()),
+                                # ('Dropout', nn.Dropout(0.2)), # Not added yet - to test
                                 ('fc2', nn.Linear(hidden_units,no_output_categories)),
                                 ('output', nn.LogSoftmax(dim=1))
                                 ]))

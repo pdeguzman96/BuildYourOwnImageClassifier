@@ -3,7 +3,6 @@ import data_processing,load_model,argparse
 from torch import optim,nn
 from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
 import torch
-import matplotlib.pyplot as plt
 
 def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,device,lr,print_every):
     '''
@@ -94,14 +93,6 @@ def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,d
             print("=======================================")
             print(f'Total Elapsed Time for Epoch {e+1}: {epoch_time:.3f} seconds.')
             print("=======================================\n")
-        
-        # Plotting training data
-        plt.figure()
-        plt.title("Training Summary")
-        plt.plot(training_losses,label='Training Loss')
-        plt.plot(validation_losses,label='Validation Loss')
-        plt.legend()
-        plt.show()
 
         print("Evaluating Model on Testing Data...\n")
         test_accuracy = 0
@@ -115,7 +106,7 @@ def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,d
             accuracy = matches.mean()
             test_accuracy += accuracy
             model.train()
-        print(f'Model Test Accuracy: {test_accuracy*100:.2f}%\n')
+        print(f'Model Test Accuracy: {test_accuracy/len(test_dataloader)*100:.2f}%\n')
 
 def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class_to_idx):
     model_checkpoint = {'model_arch':model_arch, 
@@ -127,8 +118,10 @@ def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class
                     }
     if dest_dir:
         torch.save(model_checkpoint,dest_dir+"/"+model_arch+"_checkpoint.pth")
+        print(f"{model_arch} successfully saved to {dest_dir}")
     else:
         torch.save(model_checkpoint,model_arch+"_checkpoint.pth")
+        print(f"{model_arch} successfully saved to current directory as {model_arch}_checkpoint.pth")
 
 def main():
     parser = argparse.ArgumentParser()
