@@ -52,6 +52,22 @@ def predict(image_path, model,index_mapping, topk, device):
         classes.append(index_mapping[x])
     return list_ps, classes
 
+def print_predictions(probabilities, classes, category_names=None):
+    '''
+    Prints the system output of probabilities.
+    '''
+    if category_names:
+        labels = class_to_label(category_names,classes)
+        os.system('clear')
+        print("PREDICTIONS")
+        for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
+            print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
+    else:
+        os.system('clear')
+        print("PREDICTIONS")
+        for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
+            print(f'{i}) {ps*100:.2f}% Class No. {cs} ')          
+
 def return_image_files(image_dir):
     '''
     Input: Directory with jpg files to predict
@@ -65,14 +81,18 @@ def return_image_files(image_dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('image',help="Path to location of image.")
     parser.add_argument('checkpoint',help="Path to location of trained model checkpoint.")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-i', '--image',help="Path to location of image.")
+    group.add_argument('-d', '--dir',help="Path to location of directory.",dest='img_dir')
+    # parser.add_argument('-i', '--image',help="Path to location of image.") <-- Moved this to the mut. excl. group
     parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=5)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
     parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping")
 
     args = parser.parse_args()
     image = args.image
+    img_dir = args.img_dir
     checkpoint = args.checkpoint
     topk = args.top_k
     category_names = args.category_names
@@ -86,19 +106,19 @@ def main():
     model.load_state_dict(state_dict)
 
     index_mapping = dict(map(reversed, class_to_idx.items()))
+    
     probabilities,classes = predict(image,model,index_mapping,topk,device)
     
-    if category_names:
-        labels = class_to_label(category_names,classes)
-        os.system('clear')
-        print("PREDICTIONS")
-        for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
-            print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
-    else:
-        os.system('clear')
-        print("PREDICTIONS")
-        for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
-            print(f'{i}) {ps*100:.2f}% Class No. {cs} ')          
+    if image: 
+        if category_names:
+            print_predictions(probabilities,classes,category_names)      
+        else:
+            print_predictions(probabilities,classes)          
+    # elif img_dir:
+    #     image_paths = return_image_files(img_dir)
+    #     for img in image_paths:
+            
+    #         predict(img,model,index_mapping,topk,device)
 
 if __name__=='__main__':
     main()
