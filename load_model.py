@@ -42,7 +42,7 @@ def select_pretrained_model(model_name,hidden_units,no_output_categories):
         sys.exit()
 
     try:    
-        if pretrained_model.classifier.in_features < 18432:
+        if pretrained_model.classifier.in_features < 25088:
             os.system('clear')
             print("Selected model classifier does not have enough input features. Please select another model. The following models have been tested and work with this program...")
         for m in eligible_models:
@@ -52,7 +52,7 @@ def select_pretrained_model(model_name,hidden_units,no_output_categories):
         pass
 
     classifier = nn.Sequential(OrderedDict([
-                                ('fc1', nn.Linear(18432,hidden_units)),
+                                ('fc1', nn.Linear(25088,hidden_units)),
                                 ('relu', nn.ReLU()),
                                 # ('Dropout', nn.Dropout(0.2)), # Not added yet - to test
                                 ('fc2', nn.Linear(hidden_units,no_output_categories)),

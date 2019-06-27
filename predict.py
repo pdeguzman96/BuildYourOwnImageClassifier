@@ -1,11 +1,9 @@
-import os
-import argparse
+import os, glob, json, argparse
 from torch import nn
+import torch
 from collections import OrderedDict
 import load_model
 import data_processing
-import json
-import torch
 
 def load_checkpoint(filepath,device):
     '''
@@ -39,7 +37,6 @@ def predict(image_path, model,index_mapping, topk, device):
     ''' Predict the class (or classes) of an image using a trained deep learning model.
     - Mapping is the dictionary mapping indices to classes
     '''
-    import torch
     pre_processed_image = torch.from_numpy(data_processing.process_image(image_path))
     pre_processed_image = torch.unsqueeze(pre_processed_image,0).to(device).float()
     model.to(device)
@@ -55,11 +52,22 @@ def predict(image_path, model,index_mapping, topk, device):
         classes.append(index_mapping[x])
     return list_ps, classes
 
+def return_image_files(image_dir):
+    '''
+    Input: Directory with jpg files to predict
+    '''
+    os.chdir(image_dir)
+    image_filenames = []
+    for file in glob.glob("*.jpg"):
+        image_filenames.append(file)
+    os.chdir('..')
+    return image_filenames
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('image',help="Path to location of image.")
     parser.add_argument('checkpoint',help="Path to location of trained model checkpoint.")
-    parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=3)
+    parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=5)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
     parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping")
 

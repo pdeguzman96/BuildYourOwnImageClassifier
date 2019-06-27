@@ -3,8 +3,6 @@ from PIL import Image
 from torchvision import transforms,datasets
 import torch
 
-
-
 def load_images(directory):
     '''
     Takes a directory and returns training, validation, and testing dataloaders.
@@ -27,14 +25,12 @@ def load_images(directory):
     data_transforms_train = transforms.Compose([transforms.Resize(224),
                                             transforms.RandomHorizontalFlip(),
                                             transforms.RandomRotation(30),
-                                            transforms.RandomResizedCrop(220),
-                                            transforms.CenterCrop(220),
+                                            transforms.RandomResizedCrop(224),
                                             transforms.ToTensor(),
                                             transforms.Normalize([0.485, 0.456, 0.406],
                                                                 [0.229, 0.224, 0.225])])
     # TESTING DATA TRANSFORMATIONS
     data_transforms_test = transforms.Compose([transforms.Resize(224),
-                                            transforms.CenterCrop(220),
                                             transforms.ToTensor(),
                                             transforms.Normalize([0.485, 0.456, 0.406],
                                                                 [0.229, 0.224, 0.225])])
