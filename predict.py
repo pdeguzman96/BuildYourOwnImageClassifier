@@ -58,13 +58,12 @@ def print_predictions(probabilities, classes, category_names=None):
     '''
     if category_names:
         labels = class_to_label(category_names,classes)
-        print("PREDICTIONS")
         for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
             print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
     else:
-        print("PREDICTIONS")
         for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
-            print(f'{i}) {ps*100:.2f}% Class No. {cs} ')          
+            print(f'{i}) {ps*100:.2f}% Class No. {cs} ')
+    print('')          
 
 def return_image_files(image_dir):
     '''
@@ -99,28 +98,38 @@ def main():
     else:
         device = 'cpu'    
 
+    os.system('clear')
+    print("Loading Model...\n")
+
     model_arch,input_units, output_units, hidden_units, state_dict, class_to_idx = load_checkpoint(checkpoint,device)
     model = load_model.select_pretrained_model(model_arch,hidden_units,output_units)
     model.load_state_dict(state_dict)
 
     index_mapping = dict(map(reversed, class_to_idx.items()))
     
+
     if image: 
         os.system('clear')
+        print("Prediction...\n")
         probabilities,classes = predict(image,model,index_mapping,topk,device)
         if category_names:
+            print(image.split('/')[-1])
             print_predictions(probabilities,classes,category_names)      
         else:
+            print(image.split('/')[-1])
             print_predictions(probabilities,classes)          
     elif img_dir:
         os.system('clear')
+        print("Predictions...\n")
         image_paths = return_image_files(img_dir)
         for img in image_paths:
             probabilities, classes = predict(img_dir+'/'+img,model,index_mapping,topk,device)
             if category_names:
+                print(img)
                 print_predictions(probabilities,classes,category_names)      
             else:
-                print_predictions(probabilities,classes) 
+                print(img)
+                print_predictions(probabilities,classes)
 
 if __name__=='__main__':
     main()
