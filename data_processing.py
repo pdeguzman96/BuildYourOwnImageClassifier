@@ -61,7 +61,7 @@ def process_image(image):
     Returns: NumPy Array of the image to be passed into the predict function
     '''
     # Open image
-    im = Image.open(image)
+    im = Image.open(image).convert('RGB')
     # Resize keeping aspect ratio
     im.thumbnail(size=(256,256))
     # Get dimensions

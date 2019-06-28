@@ -52,7 +52,7 @@ def predict(image_path, model,index_mapping, topk, device):
         classes.append(index_mapping[x])
     return list_ps, classes
 
-def print_predictions(probabilities, classes,image,category_names=None,save_results=False):
+def print_predictions(probabilities, classes,image,checkpoint,category_names=None,save_results=False):
     '''
     Prints the system output of probabilities.
     '''
@@ -62,12 +62,12 @@ def print_predictions(probabilities, classes,image,category_names=None,save_resu
         for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
             print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')
             if save_results:
-                logger.info(f'{image},{i},{ps},{cs},{ls.title()}')      
+                logger.info(f'{checkpoint},{image},{i},{ps},{cs},{ls.title()}')      
     else:
         for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
             print(f'{i}) {ps*100:.2f}% Class No. {cs} ')
             if save_results:
-                logger.info(f'{image},{i},{ps},{cs},{category_names}')  
+                logger.info(f'{checkpoint},{image},{i},{ps},{cs},{category_names}')  
     print('')          
 
 def return_image_files(image_dir):
@@ -110,13 +110,13 @@ def main():
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
         file_formatter = logging.Formatter('%(asctime)s,%(message)s')
-        file = 'log.csv'
+        file = 'predictions.csv'
         file_handler = logging.FileHandler(file)
         file_handler.setFormatter(file_formatter)
         logger.addHandler(file_handler)
-        print(f"Loading Model. All predictions will be logged & saved in {file}.\n")
+        print(f"Loading {checkpoint}. All predictions will be logged & saved in {file}.\n")
     else:    
-        print("Loading Model...\n")
+        print(f"Loading {checkpoint}...\n")
 
     model_arch,input_units, output_units, hidden_units, state_dict, class_to_idx = load_checkpoint(checkpoint,device)
     model = load_model.select_pretrained_model(model_arch,hidden_units,output_units)
@@ -126,27 +126,25 @@ def main():
     
 
     if image: 
-        os.system('clear')
         print("Prediction...\n")
         probabilities,classes = predict(image,model,index_mapping,topk,device)
         if category_names:
             # print(image.split('/')[-1])
-            print_predictions(probabilities,classes,image.split('/')[-1],category_names,save_results=save_results)      
+            print_predictions(probabilities,classes,image.split('/')[-1],checkpoint,category_names,save_results=save_results)      
         else:
             # print(image.split('/')[-1])
-            print_predictions(probabilities,classes,image.split('/')[-1],save_results=save_results)          
+            print_predictions(probabilities,classes,image.split('/')[-1],checkpoint,save_results=save_results)          
     elif img_dir:
-        os.system('clear')
         print("Predictions...\n")
         image_paths = return_image_files(img_dir)
         for img in image_paths:
             probabilities, classes = predict(img_dir+'/'+img,model,index_mapping,topk,device)
             if category_names:
                 # print(img)
-                print_predictions(probabilities,classes,img,category_names,save_results=save_results)      
+                print_predictions(probabilities,classes,img,checkpoint,category_names,save_results=save_results)      
             else:
                 # print(img)
-                print_predictions(probabilities,classes,img,save_results=save_results)
+                print_predictions(probabilities,classes,img,checkpoint,save_results=save_results)
 
 if __name__=='__main__':
     main()
