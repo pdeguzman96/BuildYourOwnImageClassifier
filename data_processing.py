@@ -31,6 +31,7 @@ def load_images(directory):
                                                                 [0.229, 0.224, 0.225])])
     # TESTING DATA TRANSFORMATIONS
     data_transforms_test = transforms.Compose([transforms.Resize(224),
+                                            transforms.CenterCrop(224),
                                             transforms.ToTensor(),
                                             transforms.Normalize([0.485, 0.456, 0.406],
                                                                 [0.229, 0.224, 0.225])])
@@ -62,11 +63,11 @@ def process_image(image):
     # Open image
     im = Image.open(image)
     # Resize keeping aspect ratio
-    im.thumbnail(size=(224,224))
+    im.thumbnail(size=(256,256))
     # Get dimensions
     width, height = im.size
     # Set new dimensions for center crop
-    new_width,new_height = 220,220 
+    new_width,new_height = 224,224 
     left = (width - new_width)/2
     top = (height - new_height)/2
     right = (width + new_width)/2

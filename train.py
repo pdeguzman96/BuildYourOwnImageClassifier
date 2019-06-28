@@ -1,8 +1,8 @@
-import os,sys,time
-import data_processing,load_model,argparse
+import os,sys,time,argparse
+import data_processing,load_model
 from torch import optim,nn
-from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
 import torch
+from workspace_utils import active_session # Provided by Udacity - Purpose: Keep GPU session active 
 
 def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,device,lr,print_every):
     '''
