@@ -3,3 +3,4 @@ flowers/
 REFERENCE - GITHUB - DELETE LATER/
 test_img/
 vgg16_bn_checkpoint.pth
+log.csv
