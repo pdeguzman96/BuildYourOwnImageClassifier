@@ -52,28 +52,34 @@ def predict(image_path, model,index_mapping, topk, device):
         classes.append(index_mapping[x])
     return list_ps, classes
 
-def print_predictions(probabilities, classes, category_names=None):
+def print_predictions(probabilities, classes,image,category_names=None,save_results=False):
     '''
     Prints the system output of probabilities.
     '''
+    print(image)
     if category_names:
         labels = class_to_label(category_names,classes)
         for i,(ps,ls,cs) in enumerate(zip(probabilities,labels,classes),1):
-            print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')       
+            print(f'{i}) {ps*100:.2f}% {ls.title()} | Class No. {cs}')
+            if save_results:
+                logger.info(f'{image},{i},{ps},{cs},{ls.title()}')      
     else:
         for i,(ps,cs) in enumerate(zip(probabilities,classes),1):
             print(f'{i}) {ps*100:.2f}% Class No. {cs} ')
+            if save_results:
+                logger.info(f'{image},{i},{ps},{cs},{category_names}')  
     print('')          
 
 def return_image_files(image_dir):
     '''
     Input: Directory with jpg files to predict
     '''
+    cwd = os.getcwd()
     os.chdir(image_dir)
     image_filenames = []
     for file in glob.glob("*.jpg"):
         image_filenames.append(file)
-    os.chdir('..')
+    os.chdir(cwd)
     return image_filenames
 
 def main():
@@ -82,10 +88,10 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-i', '--image',help="Path to location of image.")
     group.add_argument('-d', '--dir',help="Path to location of directory.",dest='img_dir')
-    # parser.add_argument('-i', '--image',help="Path to location of image.") <-- Moved this to the mut. excl. group
     parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=5)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
     parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping")
+    parser.add_argument('-sr','--save_results',help="Save predictions to results.csv?", action="store_true")
 
     args = parser.parse_args()
     image = args.image
@@ -97,9 +103,20 @@ def main():
         device = 'cuda'
     else:
         device = 'cpu'    
-
+        save_results = args.save_results
     os.system('clear')
-    print("Loading Model...\n")
+    if save_results:
+        global logger
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        file_formatter = logging.Formatter('%(asctime)s,%(message)s')
+        file = 'log.csv'
+        file_handler = logging.FileHandler(file)
+        file_handler.setFormatter(file_formatter)
+        logger.addHandler(file_handler)
+        print(f"Loading Model. All predictions will be logged & saved in {file}.\n")
+    else:    
+        print("Loading Model...\n")
 
     model_arch,input_units, output_units, hidden_units, state_dict, class_to_idx = load_checkpoint(checkpoint,device)
     model = load_model.select_pretrained_model(model_arch,hidden_units,output_units)
@@ -113,11 +130,11 @@ def main():
         print("Prediction...\n")
         probabilities,classes = predict(image,model,index_mapping,topk,device)
         if category_names:
-            print(image.split('/')[-1])
-            print_predictions(probabilities,classes,category_names)      
+            # print(image.split('/')[-1])
+            print_predictions(probabilities,classes,image.split('/')[-1],category_names,save_results=save_results)      
         else:
-            print(image.split('/')[-1])
-            print_predictions(probabilities,classes)          
+            # print(image.split('/')[-1])
+            print_predictions(probabilities,classes,image.split('/')[-1],save_results=save_results)          
     elif img_dir:
         os.system('clear')
         print("Predictions...\n")
@@ -125,18 +142,12 @@ def main():
         for img in image_paths:
             probabilities, classes = predict(img_dir+'/'+img,model,index_mapping,topk,device)
             if category_names:
-                print(img)
-                print_predictions(probabilities,classes,category_names)      
+                # print(img)
+                print_predictions(probabilities,classes,img,category_names,save_results=save_results)      
             else:
-                print(img)
-                print_predictions(probabilities,classes)
+                # print(img)
+                print_predictions(probabilities,classes,img,save_results=save_results)
 
 if __name__=='__main__':
     main()
-
-
-
-
-
-
 
