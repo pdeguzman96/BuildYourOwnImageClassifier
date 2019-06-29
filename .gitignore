@@ -6,3 +6,6 @@ vgg16_bn_checkpoint.pth
 log.csv
 caltech101/
 predictions.csv
+Image Classifier Project.ipynb
+.ipynb_*
+assets/

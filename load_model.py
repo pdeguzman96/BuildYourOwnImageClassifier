@@ -54,7 +54,6 @@ def select_pretrained_model(model_name,hidden_units,no_output_categories):
     classifier = nn.Sequential(OrderedDict([
                                 ('fc1', nn.Linear(25088,hidden_units)),
                                 ('relu', nn.ReLU()),
-                                # ('Dropout', nn.Dropout(0.2)), # Not added yet - to test
                                 ('fc2', nn.Linear(hidden_units,no_output_categories)),
                                 ('output', nn.LogSoftmax(dim=1))
                                 ]))

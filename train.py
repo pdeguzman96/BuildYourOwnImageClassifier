@@ -110,7 +110,7 @@ def train_model(model,train_dataloader,valid_dataloader,test_dataloader,epochs,d
 
 def save_model(trained_model,hidden_units,output_units,dest_dir,model_arch,class_to_idx):
     model_checkpoint = {'model_arch':model_arch, 
-                    'clf_input':18432,
+                    'clf_input':25088,
                     'clf_output':output_units,
                     'clf_hidden':hidden_units,
                     'state_dict':trained_model.state_dict(),
