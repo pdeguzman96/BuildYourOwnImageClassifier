@@ -1,4 +1,6 @@
-.ipynb_checkpoints*
+.ipynb_checkpoints/
+ipynb_checkpoints/
+__pycache__/
 flowers/
 REFERENCE - GITHUB - DELETE LATER/
 test_img/
@@ -7,5 +9,4 @@ log.csv
 caltech101/
 predictions.csv
 Image Classifier Project.ipynb
-.ipynb_*
 assets/

@@ -91,7 +91,7 @@ def main():
     parser.add_argument('-t','--top_k',help="No. of top classes to return",type=int,default=5)
     parser.add_argument('-g','--gpu', help="Use GPU (CUDA)?", action="store_true")
     parser.add_argument('-cn','--category_names',help="JSON Category to Label mapping")
-    parser.add_argument('-sr','--save_results',help="Save predictions to results.csv?", action="store_true")
+    parser.add_argument('-sr','--save_results',help="Save predictions to predictions.csv?", action="store_true")
 
     args = parser.parse_args()
     image = args.image

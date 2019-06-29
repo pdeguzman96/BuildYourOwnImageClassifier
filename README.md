@@ -1,11 +1,29 @@
-# Data Scientist Project
+# Build-Your Own Transfer Learning Neural Network!
 
-Project code for Udacity's Data Scientist Nanodegree program. In this project, you will first develop code for an image classifier built with PyTorch, then you will convert it into a command line application.
+This is project code for Udacity's Intro to Machine Learning Nanodegree program. In this project, code developed for an image classifier built with PyTorch, then converted into a command line applications: train.py, predict.py, load_model.py, and data_processing.py.
 
-In order to complete this project, you will need to use the GPU enabled workspaces within the classroom.  The files are all available here for your convenience, but running on your local CPU will likely not work well.
+The image classifier to recognize different species of flowers. Dataset contains 102 flower categories. However, any dataset can be used to create a Convolutional Neural Network using train.py. More details on how the Image Classifier works in the PyTorch Transfer Learning.ipynb.
 
-You should also only enable the GPU when you need it. If you are not using the GPU, please disable it so you do not run out of time!
+### Command line applications train.py & predict.py (leverage code from load_model.py, and data_processing.py)
 
-### Data
+train.py arguments...
 
-The data for this project is quite large - in fact, it is so large you cannot upload it onto Github.  If you would like the data for this project, you will want download it from the workspace in the classroom.  Though actually completing the project is likely not possible on your local unless you have a GPU.  You will be training using 102 different types of flowers, where there ~20 images per flower to train on.  Then you will use your trained classifier to see if you can predict the type for new images of the flowers.
+1.  'data_directory'. 'Provide data directory on which to train the model. Mandatory argument', type = str
+2.  '-a' or '--arch'. 'All VGG models can be used. Otherwise, VGG16 will be used', type = str
+3.  '-hid or '--hidden_units'. 'Hidden units in Classifier. Default value is 4096', type = int
+4.  '-o' or '--output_units. Output units in Classifier. Default value is 102', type = int
+5.  '-lr' or '--learning_rate'. 'Learning rate, default value 0.001', type = float
+6.  '-e or '--epochs'. 'Number of epochs, default value is 5', type = int
+7.  '-p' or '--p' 'Number of batches to train model on before printing validation testing results, default value is 5', type = int
+8. '-g' or '--GPU'. "Option to use GPU", type = str
+9. '-sd' or '--save_dir'. 'Provide saving directory if you want to save the model checkpoint elsewhere', type = str
+
+predict.py arguments...
+
+1. 'checkpoint' 'Path to location of trained model checkpoint. Mandatory.' type = str
+2. '-i' or '--image' Mandatory mutually exclusive 'Path to image', type = str
+3. '-d' or '--dir' Mandatory mutually exclusive 'Path to directory containing images', type = str
+3. '-t' or '--top_k'. 'Top K most likely classes. Default is 5', type = int
+4. '-cn' or '--category_names'. 'Mapping of categories to real names. JSON file name to be provided. Optional', type = str
+5. '-g' or '--GPU'. "Option to use GPU. Optional", type = str
+6. '-sr' or '--save_results' 'Save results to predictions.csv? Optional.' 
