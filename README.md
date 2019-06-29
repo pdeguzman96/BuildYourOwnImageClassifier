@@ -4,6 +4,8 @@ This is project code for Udacity's Intro to Machine Learning Nanodegree program.
 
 The image classifier to recognize different species of flowers. Dataset contains 102 flower categories. However, any dataset can be used to create a Convolutional Neural Network using train.py. More details on how the Image Classifier works in the PyTorch Transfer Learning.ipynb.
 
+If you want access to the flowers data and my model checkpoint, they're in my Google Drive [here](https://drive.google.com/open?id=1weQumRkbqBua8cT2oau6Bg5Hjuz6kUPJ). I trained this model on the [Caltech 101 Images](http://www.vision.caltech.edu/Image_Datasets/Caltech101/) dataset, and it worked as well.
+
 ### Command line applications train.py & predict.py (leverage code from load_model.py, and data_processing.py)
 
 train.py arguments...
