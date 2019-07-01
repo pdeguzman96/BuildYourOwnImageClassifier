@@ -23,7 +23,7 @@ train.py arguments...
 
 #### Use predict.py to use your model to predict classes of images! 
 - You can have it predict on 1 image or an entire directory of images. 
-- Use -sr to have it save results in a file called predictions.csv
+- Use -sr to have it save results in a file called predictions.csv<br>
 predict.py arguments...
 
 1. 'checkpoint' 'Path to location of trained model checkpoint. Mandatory.' type = str
