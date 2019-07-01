@@ -8,6 +8,7 @@ If you want access to the flowers data and my model checkpoint, they're in my Go
 
 ### Command line applications train.py & predict.py (leverage code from load_model.py, and data_processing.py)
 
+## Use train.py to train your own neural network! Tip: train this on a GPU, or you'll *never* finish.
 train.py arguments...
 
 1.  'data_directory'. 'Provide data directory on which to train the model. Mandatory argument', type = str
@@ -20,6 +21,9 @@ train.py arguments...
 8. '-g' or '--GPU'. "Option to use GPU", type = str
 9. '-sd' or '--save_dir'. 'Provide saving directory if you want to save the model checkpoint elsewhere', type = str
 
+## Use predict.py to use your model to predict classes of images! 
+- You can have it predict on 1 image or an entire directory of images. 
+- Use -sr to have it save results in a file called predictions.csv
 predict.py arguments...
 
 1. 'checkpoint' 'Path to location of trained model checkpoint. Mandatory.' type = str
