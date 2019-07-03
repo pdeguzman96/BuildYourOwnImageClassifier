@@ -1,4 +1,4 @@
-# Build-Your Own Transfer Learning Neural Network!
+# Build-Your Own Transfer Learning Neural Network
 ---
 This is project code for Udacity's Intro to Machine Learning Nanodegree program. In this project, code developed for an image classifier built with PyTorch, then converted into a command line applications: train.py, predict.py, load_model.py, and data_processing.py.
 
