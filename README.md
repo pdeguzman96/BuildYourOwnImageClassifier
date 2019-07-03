@@ -8,8 +8,10 @@ If you want access to the flowers data and my model checkpoint, they're in my Go
 
 ### Command line applications train.py & predict.py (leverage code from load_model.py, and data_processing.py)
 ---
-#### Use train.py to train your own neural network! Tip: train this on a GPU, or you'll *never* finish.
-train.py arguments...
+### train.py arguments...
+
+Use train.py to train your own neural network! Tip: train this on a GPU, or you'll *never* finish.
+
 ---
 1.  'data_directory'. 'Provide data directory on which to train the model. Mandatory argument', type = str
 2.  '-a' or '--arch'. 'All VGG models can be used. Otherwise, VGG16 will be used', type = str
@@ -21,10 +23,13 @@ train.py arguments...
 8. '-g' or '--GPU'. "Option to use GPU", type = str
 9. '-sd' or '--save_dir'. 'Provide saving directory if you want to save the model checkpoint elsewhere', type = str
 
-#### Use predict.py to use your model to predict classes of images! 
+---
+#### predict.py
+
+Use predict.py to use your model to predict classes of images.
+
 - You can have it predict on 1 image or an entire directory of images. 
 - Use -sr to have it save results in a file called predictions.csv<br>
-predict.py arguments...
 ---
 1. 'checkpoint' 'Path to location of trained model checkpoint. Mandatory.' type = str
 2. '-i' or '--image' Mandatory mutually exclusive 'Path to image', type = str
